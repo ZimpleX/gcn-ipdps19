@@ -1,0 +1,6 @@
+phases:
+  - md: "subgraph"  # mode
+    bs: -1          # batch size
+    lr: 0.05       # learning rate
+    es: 0           # epoch start
+    ee: 100         # epoch end
