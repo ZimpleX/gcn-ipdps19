@@ -1,9 +1,9 @@
 import pickle
 import tensorflow as tf
-from graphsage.utils import *
-from graphsage.supervised_train import evaluate_full_batch,construct_placeholders,FLAGS
-from graphsage.minibatch import NodeMinibatchIterator
-from graphsage.supervised_models import SupervisedGraphsage
+from gcn_ipdps19.utils import *
+from gcn_ipdps19.supervised_train import evaluate_full_batch,construct_placeholders,FLAGS
+from gcn_ipdps19.minibatch import NodeMinibatchIterator
+from gcn_ipdps19.supervised_models import SupervisedGraphsage
 
 
 # flags to run:

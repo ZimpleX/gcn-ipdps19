@@ -1,6 +1,6 @@
 import math
-from graphsage.inits import *
-from graphsage.graph_samplers import *
+from gcn_ipdps19.inits import *
+from gcn_ipdps19.graph_samplers import *
 import tensorflow as tf
 import scipy.sparse as sp
 

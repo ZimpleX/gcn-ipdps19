@@ -1,32 +1,3 @@
-"""
-TODO:
-
->- you can eval val in the subgraph fashion. also you can use majority vote for each batch.
-    -- why the accuracy is not as good
-    >- you should eval in full batch, for both val and test nodes
->> eval the baseline with 3 layers
-    -- 3 layers with baseline does not generalize better than 2 layer
-    -- i.e.: 3 layer has val mic of 0.95, while train mic of nearly 0.98
->> calculate accuracy, no label? (F1 calc warning)
-    -- you should plot class label frequency
--- new dataset: amazon/pokec
-
-> log training accuracy: comparison gap between training & validation
-* how will network generalize when sampling size is very large
-> what is reddit's subgraph degree?
-> obtain adj & test_adj of baseline
-> log trained model, test accuracy of trained model on preprocessed data
-> check the detailed classification result --> high deg nodes are more accurate?
-> GCN is not performing avg of neighbors by adj matrix, it is doing P matrix
-
-Learnable vars:
-* MeanAggregator/neigh_weights + self_weights
-* Dense/weights + bias
-"""
-
-# ---- data ----
-# http://networkrepository.com
-
 import sys
 import yaml
 from os.path import expanduser
@@ -46,11 +17,11 @@ import datetime
 import pdb
 
 
-from graphsage.inits import *
-from graphsage.supervised_models import SupervisedGraphsage
-from graphsage.minibatch import NodeMinibatchIterator
-from graphsage.utils import *
-from graphsage.metric import *
+from gcn_ipdps19.inits import *
+from gcn_ipdps19.supervised_models import SupervisedGraphsage
+from gcn_ipdps19.minibatch import NodeMinibatchIterator
+from gcn_ipdps19.utils import *
+from gcn_ipdps19.metric import *
 from tensorflow.python.client import timeline
 
 

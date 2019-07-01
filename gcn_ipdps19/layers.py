@@ -1,6 +1,6 @@
 import tensorflow as tf
-from graphsage.inits import glorot,zeros,trained
-from graphsage.mkl_wrapper import *
+from gcn_ipdps19.inits import glorot,zeros,trained
+from gcn_ipdps19.mkl_wrapper import *
 
 
 # global unique layer ID dictionary for layer name assignment
