@@ -1,0 +1,13 @@
+network:
+  - 512             # hidden layer dimension (before concat)
+  - 512
+  - 'sigmoid'       # output layer: sigmoid for multi-class; softmax for single class
+params:
+  - lr: 0.01
+    weight_decay: 0.0
+phases:
+  - end: 30          # end epoch for this phase
+    dropout: 0.2
+    sampler: 'frontier'
+    size_subgraph: 4000
+    size_frontier: 2000

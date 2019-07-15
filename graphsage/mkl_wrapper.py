@@ -5,6 +5,8 @@ import tensorflow as tf
 from tensorflow.python.framework import ops
 from ctypes import *
 mkl = cdll.LoadLibrary("libmkl_rt.so")
+# num_cpu=40
+# mkl.mkl_set_num_threads(byref(c_int(num_cpu)))
 
 # see https://gist.github.com/harpone/3453185b41d8d985356cbe5e57d67342
 def py_func(func,inp,Tout,stateful=True,name=None,grad=None):

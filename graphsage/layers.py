@@ -5,6 +5,7 @@ from graphsage.mkl_wrapper import *
 
 # global unique layer ID dictionary for layer name assignment
 _LAYER_UIDS = {}
+FLAGS=tf.app.flags.FLAGS
 
 def get_layer_uid(layer_name=''):
     """Helper function, assigns unique layer IDs."""
@@ -93,7 +94,10 @@ class Dense(Layer):
 
     def _call(self, inputs, is_act=True):
         x = tf.nn.dropout(inputs, 1-self.dropout)
-        output = tf_sgemm(x, self.vars['weights'])
+        if FLAGS.mkl:
+            output = tf_sgemm(x, self.vars['weights'])
+        else:
+            output=tf.matmul(x,self.vars['weights'])
         if self.bias:
             output += self.vars['bias']
         return self.act(output)
@@ -142,9 +146,14 @@ class MeanAggregator(Layer):
         neigh_vecs, self_vecs, adj_norm = inputs
         #neigh_vecs = tf.nn.dropout(neigh_vecs, 1-self.dropout)
         #self_vecs = tf.nn.dropout(self_vecs, 1-self.dropout)
-        neigh_means = tf_scoomm(adj_norm, neigh_vecs)
-        from_neighs = tf_sgemm(neigh_means, self.vars['neigh_weights'])
-        from_self = tf_sgemm(self_vecs, self.vars["self_weights"])
+        if FLAGS.mkl:
+            neigh_means = tf_scoomm(adj_norm, neigh_vecs)
+            from_neighs = tf_sgemm(neigh_means, self.vars['neigh_weights'])
+            from_self = tf_sgemm(self_vecs, self.vars["self_weights"])
+        else:
+            neigh_means=tf.sparse_tensor_dense_matmul(adj_norm,neigh_vecs)
+            from_neighs=tf.matmul(neigh_means,self.vars['neigh_weights'])
+            from_self=tf.matmul(self_vecs,self.vars['self_weights'])
         output = tf.concat([from_self, from_neighs], axis=1)
         if self.bias:
             output += self.vars['bias']

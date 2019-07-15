@@ -85,7 +85,7 @@ flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterati
 
 flags.DEFINE_string('train_config', '*.yml', "path to the configuration of training (*.yml)")
 flags.DEFINE_string('model','','pretrained model')
-
+flags.DEFINE_boolean('mkl',False,'whether to use mkl library')
 
 #flags.DEFINE_string('restore_file', '', "path to model to be restored")
 #flags.DEFINE_string('db_name', 'data.db', 'name of the database which stores the training log')
