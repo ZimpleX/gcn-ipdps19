@@ -1,7 +1,7 @@
 import tensorflow as tf
 from collections import namedtuple
-from graphsage.inits import *
-import graphsage.layers as layers
+from gcn_ipdps19.inits import *
+import gcn_ipdps19.layers as layers
 import pdb
 
 
