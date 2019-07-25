@@ -2,6 +2,11 @@
 
 Open source code for the GCN training algorithm in the IEEE/IPDPS'19 paper.
 
+### Contact
+
+Hanqing Zeng: zengh@usc.edu
+Hongkuan Zhou: hongkuaz@usc.edu
+
 ## Dependencies
 
 * python >= 3.6.8
