@@ -1,5 +1,4 @@
 import tensorflow as tf
-from collections import namedtuple
 from gcn_ipdps19.inits import *
 import gcn_ipdps19.layers as layers
 import pdb
@@ -7,10 +6,10 @@ import pdb
 
 
 
-class GCN_Subgraph:#(models.Model):
+class GCN_Subgraph:
 
     def __init__(self, num_classes, placeholders, features,
-            dims, train_params, loss='softmax', model_pretrain=None, **kwargs):
+            dims, train_params, loss='softmax',  **kwargs):
         '''
         Args:
             - placeholders: Stanford TensorFlow placeholder object.
@@ -18,9 +17,8 @@ class GCN_Subgraph:#(models.Model):
             - adj: Numpy array with adjacency lists (padded with random re-samples)
             - degrees: Numpy array with node degrees.
             - sigmoid_loss: Set to true if nodes can belong to multiple classes
-            - model_pretrain: contains pre-trained weights, if you are doing inferencing
         '''
-        self.aggregator_cls = layers.MeanAggregator
+        self.aggregator_cls = layers.Mean_Aggregator
         self.lr = train_params['lr']
         self.node_subgraph = placeholders['node_subgraph']
         self.num_layers = len(dims)
@@ -36,17 +34,15 @@ class GCN_Subgraph:#(models.Model):
                     beta1=0.9,beta2=0.999,epsilon=1e-8,use_locking=False,name='Adam')
         self.loss = 0
         self.opt_op = None
-        self.build(model_pretrain=model_pretrain)
+        self.build()
 
 
-    def build(self,model_pretrain=None):
+    def build(self):
         """
         Build the sample graph with adj info in self.sample()
         directly feed the sampled support vectors to tf placeholder
         """
-        model_pretrain_aggr = model_pretrain['meanaggr'] if model_pretrain else None
-        model_pretrain_dense = model_pretrain['dense'] if model_pretrain else None
-        self.aggregators = self.get_aggregators(model_pretrain=model_pretrain_aggr)
+        self.aggregators = self.get_aggregators()
         self.outputs = self.aggregate_subgraph(self.node_subgraph,\
                             self.features,self.aggregators,adjs=self.adj_subgraph)
         #####################
@@ -54,7 +50,7 @@ class GCN_Subgraph:#(models.Model):
         #####################
         self.outputs = tf.nn.l2_normalize(self.outputs, 1)
         self.node_pred = layers.Dense(2*self.dims[-1], self.num_classes, self.weight_decay,
-                dropout=self.placeholders['dropout'], act=lambda x:x, model_pretrain=model_pretrain_dense)
+                dropout=self.placeholders['dropout'], act=lambda x:x)
         self.node_preds = self.node_pred(self.outputs)
 
         #####################
@@ -86,14 +82,12 @@ class GCN_Subgraph:#(models.Model):
                 else tf.nn.softmax(self.node_preds)
 
 
-    def get_aggregators(self,name=None,model_pretrain=None):
+    def get_aggregators(self,name=None):
         aggregators = []
-        if model_pretrain is None:
-            model_pretrain = [None]*self.num_layers
         for layer in range(self.num_layers):
             dim_mult = (layer!=0) and 2 or 1
             aggregator = self.aggregator_cls(dim_mult*self.dims[layer], self.dims[layer+1],
-                    dropout=self.placeholders['dropout'],name=name,model_pretrain=model_pretrain[layer])
+                    dropout=self.placeholders['dropout'],name=name)
             aggregators.append(aggregator)
         return aggregators
 

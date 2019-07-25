@@ -63,12 +63,7 @@ class Layer:
 class Dense(Layer):
     """Dense layer."""
     def __init__(self, dim_in, dim_out, weight_decay, dropout=0.,
-                 act=tf.nn.relu, bias=True, model_pretrain=None, **kwargs):
-        """
-        model_pretrain is not None if you want to load the trained model
-        model_pretrain[0] is weights
-        model_pretrain[1] is bias
-        """
+                 act=tf.nn.relu, bias=True,  **kwargs):
         super(Dense, self).__init__(**kwargs)
         self.dropout = dropout
         self.act = act
@@ -78,17 +73,12 @@ class Dense(Layer):
         self.weight_decay = weight_decay
 
         with tf.variable_scope(self.name + '_vars'):
-            if model_pretrain is None:
-                self.vars['weights'] = tf.get_variable('weights', shape=(dim_in, dim_out),
-                                         dtype=tf.float32,
-                                         initializer=tf.contrib.layers.xavier_initializer(),
-                                         regularizer=tf.contrib.layers.l2_regularizer(self.weight_decay))
-                if self.bias:
-                    self.vars['bias'] = zeros([dim_out],name='bias')
-            else:
-                self.vars['weights'] = trained(model_pretrain[0], name='weight')
-                if self.bias:
-                    self.vars['bias'] = trained(model_pretrain[1], name='bias')
+            self.vars['weights'] = tf.get_variable('weights', shape=(dim_in, dim_out),
+                                     dtype=tf.float32,
+                                     initializer=tf.contrib.layers.xavier_initializer(),
+                                     regularizer=tf.contrib.layers.l2_regularizer(self.weight_decay))
+            if self.bias:
+                self.vars['bias'] = zeros([dim_out],name='bias')
         if self.logging:
             self._log_vars()
 
@@ -104,19 +94,14 @@ class Dense(Layer):
 
 
 
-class MeanAggregator(Layer):
+class Mean_Aggregator(Layer):
     """
     Aggregates via mean followed by matmul and non-linearity.
     """
 
     def __init__(self, dim_in, dim_out, neigh_dim_in=None,
-            dropout=0., bias=False, act=tf.nn.relu, model_pretrain=None, **kwargs):
-        """
-        model_pretrain is not None if you want to load the trained model
-        model_pretrain[0] is neigh_weights
-        model_pretrain[1] is self_weights
-        """
-        super(MeanAggregator, self).__init__(**kwargs)
+            dropout=0., bias=False, act=tf.nn.relu, **kwargs):
+        super(Mean_Aggregator, self).__init__(**kwargs)
 
         self.dropout = dropout
         self.bias = bias
@@ -127,12 +112,8 @@ class MeanAggregator(Layer):
             neigh_dim_in = dim_in
 
         with tf.variable_scope(self.name + '_vars'):
-            if model_pretrain is None:
-                self.vars['neigh_weights'] = glorot([neigh_dim_in,dim_out], name='neigh_weights')
-                self.vars['self_weights'] = glorot([dim_in,dim_out], name='self_weights')
-            else:
-                self.vars['neigh_weights'] = trained(model_pretrain[0], name='neigh_weights')
-                self.vars['self_weights'] = trained(model_pretrain[1], name='self_weights')
+            self.vars['neigh_weights'] = glorot([neigh_dim_in,dim_out], name='neigh_weights')
+            self.vars['self_weights'] = glorot([dim_in,dim_out], name='self_weights')
             if self.bias:
                 self.vars['bias'] = zeros([self.dim_out], name='bias')
 

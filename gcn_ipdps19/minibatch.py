@@ -103,8 +103,9 @@ class Minibatch:
         adj = sp.csr_matrix(([1]*len(rows),(rows,cols)),shape=(self.node_subgraph.size,self.node_subgraph.size))
         _num_edges = len(adj.nonzero()[1])
         _num_vertices = len(self.node_subgraph)
-        print('subgraph: {} vertices, {} edges, {:5.2f} degree\t\tis_val: {}, is_test: {}'\
-            .format(_num_vertices,_num_edges,_num_edges/_num_vertices,is_val,is_test))
+        if not is_val and not is_test:
+            print('minibatch subgraph: {} vertices, {} edges, {:5.2f} degree'\
+                .format(_num_vertices,_num_edges,_num_edges/_num_vertices))
         _indices_ph = np.column_stack(adj.nonzero())
         _shape_ph = adj.shape
         _diag_shape = (adj.shape[0],adj.shape[0])

@@ -1,7 +1,6 @@
 import numpy as np
 import json
 import random
-from scipy.stats import rv_discrete
 import abc
 import time
 import math
@@ -62,14 +61,10 @@ class frontier_sampling(graph_sampler):
         m = self.size_frontier
         super().sample(output_subgraphs,tid,phase)
         t1 = time.time()
-        #import pdb; pdb.set_trace()
         assert m is not None or frontier is not None
         EPSILON = 1e-5
         if frontier is None:
-            #_prob = (self.coverage_v_train+EPSILON)**-1
-            #_prob = _prob/_prob.sum()
             frontier = random.choices(self.node_train,k=m)
-            #np.random.choice(np.arange(self.adj_full.shape[0]),m,p=_prob)
             update_coverage_v_train = False#True
         else:
             m = frontier.size
@@ -106,7 +101,7 @@ class frontier_sampling(graph_sampler):
         for cur_size in range(m,self.size_subgraph+1):
             while True:
                 idx = random.randint(0,end_idx-1)
-                if arr_indicator[idx,0]:    # TODO: arr_indicator[idx,0] stores the vertex id or 0. However, what about the vertex id is 0?
+                if arr_indicator[idx,0]:
                     break
             selected_v,offset = arr_indicator[idx]
             # *********************
