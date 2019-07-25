@@ -17,10 +17,7 @@ import pdb
 np.random.seed(123)
 
 
-############################
-# FOR SUPERVISED MINIBATCH #
-############################
-class NodeMinibatchIterator(object):
+class Minibatch:
     """
     This minibatch iterator iterates over nodes for supervised learning.
     """

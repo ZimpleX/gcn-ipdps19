@@ -1,10 +1,8 @@
 import sys
 import yaml
-from os.path import expanduser
 
 import os
 import tensorflow as tf
-from tensorflow.python import debug as tf_debug
 import numpy as np
 import time as ttime
 import datetime
@@ -12,11 +10,10 @@ import pdb
 
 
 from gcn_ipdps19.inits import *
-from gcn_ipdps19.supervised_models import SupervisedGraphsage
-from gcn_ipdps19.minibatch import NodeMinibatchIterator
+from gcn_ipdps19.models import GCN_Subgraph
+from gcn_ipdps19.minibatch import Minibatch
 from gcn_ipdps19.utils import *
 from gcn_ipdps19.metric import *
-from tensorflow.python.client import timeline
 
 
 import subprocess
@@ -107,13 +104,9 @@ def prepare(train_data,train_params,dims_gcn):
     loss_type = dims_gcn[-1]
 
     placeholders = construct_placeholders(num_classes)
-    minibatch = NodeMinibatchIterator(adj_full, adj_train, role, class_arr, placeholders)
-    model = SupervisedGraphsage(num_classes, placeholders,
+    minibatch = Minibatch(adj_full, adj_train, role, class_arr, placeholders)
+    model = GCN_Subgraph(num_classes, placeholders,
                 feats, dims, train_params, loss=loss_type, logging=True)
-
-    # config = tf.ConfigProto(log_device_placement=FLAGS.log_device_placement)
-    # config.gpu_options.allow_growth = True
-    # config.allow_soft_placement = True
 
     # Initialize session
     sess = tf.Session(config=tf.ConfigProto(device_count={"CPU":2},inter_op_parallelism_threads=44,intra_op_parallelism_threads=44))
@@ -144,7 +137,6 @@ def prepare(train_data,train_params,dims_gcn):
     summary_writer = tf.summary.FileWriter(log_dir(train_params,FLAGS.data_prefix,git_branch,git_rev,timestamp), sess.graph)
     # Init variables
     sess.run(tf.global_variables_initializer())
-    #sess = tf_debug.LocalCLIDebugWrapperSession(sess)
     return model,minibatch, sess, [merged,misc_stats],ph_misc_stat, summary_writer
 
 

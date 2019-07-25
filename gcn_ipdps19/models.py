@@ -7,8 +7,7 @@ import pdb
 
 
 
-class SupervisedGraphsage:#(models.Model):
-    """Implementation of supervised GraphSAGE."""
+class GCN_Subgraph:#(models.Model):
 
     def __init__(self, num_classes, placeholders, features,
             dims, train_params, loss='softmax', model_pretrain=None, **kwargs):
@@ -63,7 +62,6 @@ class SupervisedGraphsage:#(models.Model):
         #####################
         self._loss()
         grads_and_vars = self.optimizer.compute_gradients(self.loss)
-        # ---- why clip by value?? ----
         clipped_grads_and_vars = [(tf.clip_by_value(grad, -5.0, 5.0) if grad is not None else None, var)
                 for grad, var in grads_and_vars]
         self.grad, _ = clipped_grads_and_vars[0]
@@ -72,17 +70,12 @@ class SupervisedGraphsage:#(models.Model):
 
 
     def _loss(self):
-        # Weight decay loss
-        # [z]: see this: https://stats.stackexchange.com/questions/29130/difference-between-neural-net-weight-decay-and-learning-rate
-        # ---- 06082018 ----
-        # these are all the trainable var
         for aggregator in self.aggregators:
             for var in aggregator.vars.values():
                 self.loss += self.weight_decay * tf.nn.l2_loss(var)
         for var in self.node_pred.vars.values():
             self.loss += self.weight_decay * tf.nn.l2_loss(var)
 
-        # classification loss
         f_loss = tf.nn.sigmoid_cross_entropy_with_logits if self.sigmoid_loss\
                                 else tf.nn.softmax_cross_entropy_with_logits
         self.loss += tf.reduce_mean(f_loss(logits=self.node_preds,labels=self.placeholders['labels']))
