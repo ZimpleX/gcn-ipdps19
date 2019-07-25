@@ -42,21 +42,21 @@ GCN-IPDPS19/
 
 ## Run Training
 
-There are two options to run the code on CPU with mkl. You can either use the '--mkl' flag to directly call C++ mkl libraries or use the mkl-built tensorflow.
+There are two options to run the code on CPU with mkl. You can either use the `--mkl` flag to directly call C++ mkl libraries or use the mkl-built tensorflow.
 
 To run the code on CPU with mkl-built tensorflow:
 
-'./run_gs_subgraph.sh <dataset_name> <path to train_config yml>'
+'./run_training.sh <dataset_name> <path to train_config yml>'
 
 To run the code on CPU with python-build tensorflow:
 
-'./run_gs_subgraph.sh <dataset_name> <path to train_config yml> --mkl'
+'./run_training.sh <dataset_name> <path to train_config yml> --mkl'
 
 To run the code on GPU:
 
-'./run_gs_subgraph.sh <dataset_name> <path to train_config yml> --gpu <GPU number>'
+'./run_training.sh <dataset_name> <path to train_config yml> --gpu <GPU number>'
 
-For example '--gpu 0' will run on the fisrt GPU.
+For example `--gpu 0` will run on the fisrt GPU.
 
 
 
