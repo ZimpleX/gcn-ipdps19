@@ -1,6 +1,7 @@
 import math
 from gcn_ipdps19.inits import *
 from gcn_ipdps19.graph_samplers import *
+from gcn_ipdps19.utils import *
 import tensorflow as tf
 import scipy.sparse as sp
 
@@ -119,7 +120,7 @@ class Minibatch:
 
     def par_graph_sample(self,mode,save,prefix,sampled_subgraph_num,args_dict):
         if self.num_proc > 1:
-            print('par sampling')
+            printf('par sampling',style='yellow')
             output_subgraphs = mp.Queue()
             processes = [mp.Process(target=self.graph_sampler.sample,args=(output_subgraphs,i,mode,args_dict['frontier'])) for i in range(self.num_proc)]
             for p in processes:

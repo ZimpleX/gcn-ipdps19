@@ -58,3 +58,25 @@ To run the code on GPU:
 
 For example `--gpu 0` will run on the fisrt GPU.
 
+
+## Citation
+
+```
+@article{DBLP:journals/corr/abs-1810-11899,
+  author    = {Hanqing Zeng and
+               Hongkuan Zhou and
+               Ajitesh Srivastava and
+               Rajgopal Kannan and
+               Viktor K. Prasanna},
+  title     = {Accurate, Efficient and Scalable Graph Embedding},
+  journal   = {CoRR},
+  volume    = {abs/1810.11899},
+  year      = {2018},
+  url       = {http://arxiv.org/abs/1810.11899},
+  archivePrefix = {arXiv},
+  eprint    = {1810.11899},
+  timestamp = {Wed, 31 Oct 2018 14:24:29 +0100},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1810-11899},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
