@@ -121,7 +121,7 @@ class NodeMinibatchIterator(object):
 
     def par_graph_sample(self,mode,save,prefix,sampled_subgraph_num,args_dict):
         if self.num_proc > 1:
-            printf('par sampling',type='WARN')
+            print('par sampling')
             output_subgraphs = mp.Queue()
             processes = [mp.Process(target=self.graph_sampler.sample,args=(output_subgraphs,i,mode,args_dict['frontier'])) for i in range(self.num_proc)]
             for p in processes:

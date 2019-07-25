@@ -1,17 +1,11 @@
 import sys
 import yaml
 from os.path import expanduser
-home = expanduser("~")
 
-ZYTHON_PATH = "{}/Projects/".format(home)
-sys.path.insert(0, ZYTHON_PATH)
-
-import cProfile
 import os
 import tensorflow as tf
 from tensorflow.python import debug as tf_debug
 import numpy as np
-from zython.logf.printf import printf
 import time as ttime
 import datetime
 import pdb
@@ -97,7 +91,6 @@ def construct_placeholders(num_classes):
     return placeholders
 
 
-pr = cProfile.Profile()
 
 
 
@@ -168,32 +161,34 @@ def train(train_phases,train_params,dims_gcn,model,minibatch,\
     for ip,phase in enumerate(train_phases):
         minibatch.set_sampler(phase)
         num_batches = minibatch.num_training_batches()
-        printf('START PHASE {:4d}',ip)
+        printf('START PHASE {:4d}'.format(ip),style='underline')
         for e in range(epoch_ph_start,phase['end']):
-            printf('Epoch {:4d}',e)
+            printf('Epoch {:4d}'.format(e),style='bold')
             minibatch.shuffle()
             l_loss_tr = list()
             l_f1mic_tr = list()
             l_f1mac_tr = list()
             l_size_subg = list()
+            time_epoch = 0
             while not minibatch.end():
                 feed_dict, labels = minibatch.minibatch_train_feed_dict(phase['dropout'],is_val=False,is_test=False)
                 t0=ttime.time()
                 _,__,loss_train,pred_train = sess.run([train_stat[0], \
                         model.opt_op, model.loss, model.preds], feed_dict=feed_dict)
-                printf("itr time: {:4f}",ttime.time()-t0)
+                t1 = ttime.time()
+                time_epoch += t1-t0
                 if not minibatch.batch_num % FLAGS.print_every:
                     f1_mic,f1_mac = calc_f1(labels,pred_train,dims_gcn[-1])
-                    printf("Iter {:4d}\ttrain loss {:.5f}\tmic {:5f}\tmac {:5f}",\
-                        minibatch.batch_num,loss_train,f1_mic,f1_mac,type=None)
+                    printf("Iter {:4d}\ttrain loss {:.5f}\tmic {:5f}\tmac {:5f}".format(
+                        minibatch.batch_num,loss_train,f1_mic,f1_mac))
                     l_loss_tr.append(loss_train)
                     l_f1mic_tr.append(f1_mic)
                     l_f1mac_tr.append(f1_mac)
                     l_size_subg.append(minibatch.size_subgraph)
             loss_val,f1mic_val,f1mac_val,time = \
                     evaluate_full_batch(sess,model,minibatch,is_valtest=True)
-            printf('   val/test loss {:.5f}\tmic {:.5f}\tmac {:.5f}',loss_val,f1mic_val,f1mac_val)
-            printf('  avg train loss {:.5f}\tmic {:.5f}\tmac {:.5f}',f_mean(l_loss_tr),f_mean(l_f1mic_tr),f_mean(l_f1mac_tr))
+            printf('  val loss {:.5f}\tmic {:.5f}\tmac {:.5f}'.format(loss_val,f1mic_val,f1mac_val))
+            printf('  avg train loss {:.5f}\tmic {:.5f}\tmac {:.5f}'.format(f_mean(l_loss_tr),f_mean(l_f1mic_tr),f_mean(l_f1mac_tr)))
                 
             misc_stat = sess.run([train_stat[1]],feed_dict={\
                                     ph_misc_stat['val_f1_micro']: f1mic_val,
@@ -211,7 +206,7 @@ def train(train_phases,train_params,dims_gcn,model,minibatch,\
         epoch_ph_start = phase['end']
     saver.save(sess, 'models/{data}'.format(data=FLAGS.data_prefix.split('/')[-1]),global_step=e)
     save_model_weights(sess, model, FLAGS.data_prefix.split('/')[-1],e,FLAGS.train_config)
-    printf("Optimization Finished!",type='WARN')
+    printf("Optimization Finished!",style='red')
     loss, f1_mic, f1_mac, duration = evaluate_full_batch(sess,model,minibatch)
     print("Full validation stats:",\
             "loss=", "{:.5f}".format(loss),\
@@ -233,8 +228,6 @@ def main(argv=None):
     train_params,train_phases,train_data,dims_gcn = parse_n_prepare(FLAGS)
     model,minibatch,sess,train_stat,ph_misc_stat,summary_writer = \
             prepare(train_data,train_params,dims_gcn)
-    #cProfile.runctx("train(train_phases,model,minibatch,sess,train_stat,ph_misc_stat,summary_writer,validate_size_subgraph)",\
-    #    globals(),locals(),'debug.profile')
     train(train_phases,train_params,dims_gcn,model,minibatch,sess,train_stat,ph_misc_stat,summary_writer)
 
 

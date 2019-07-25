@@ -2,14 +2,12 @@ import numpy as np
 import json
 import random
 from scipy.stats import rv_discrete
-from zython.logf.printf import printf
 import abc
 import time
 import math
 import pdb
 from math import ceil
 
-#random.seed(123)
 
 class graph_sampler:
     __metaclass__ = abc.ABCMeta
@@ -162,33 +160,3 @@ class frontier_sampling(graph_sampler):
             self.node_subgraph = node_subgraph
             return node_subgraph
 
-
-
-
-class community_sampling(graph_sampler):
-
-    def __init__(self,adj_train,adj_full,node_train,size_subgraph):
-        super().__init__(adj_train,adj_full,node_train,size_subgraph)
-        self.classloaded = 0
-        self.class_map_dict = dict()
-        self.name_sampler = 'COMMUNITY'
-
-    def sample(self,phase):
-        super().sample(phase)
-        _adj = self.adj_train if phase=='train' else self.adj_full
-        if self.classloaded == 0:
-            self.class_map_dict = json.load(open(prefix+'/class_map.json'))
-            self.classloaded = 1
-        num_vertices = len(set(_adj.nonzero()[0]))
-        classified = 0;
-        curr_class = 0;
-        budget = self.size_subgraph / num_vertices
-        node_subgraph = [];
-        while classified < num_vertices:
-            curr_class_set = [int(k) for k,v in self.class_map_dict.items() if v==curr_class and len(_adj[int(k)].nonzero()[0])>0]
-            node_subgraph.extend(random.sample(curr_class_set,int(len(curr_class_set)*budget)))
-            classified += len(curr_class_set)
-            curr_class += 1
-        printf('subgraph size ={}',len(set(node_subgraph)))
-        self.node_subgraph = np.array(node_subgraph)
-        return self.node_subgraph

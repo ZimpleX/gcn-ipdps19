@@ -106,3 +106,22 @@ def log_dir(train_params,prefix,git_branch,git_rev,timestamp):
     return log_dir
 
 
+
+# ------- printing function -------
+
+
+def printf(msg,style=''):
+    _bcolors = {'header': '\033[95m',
+                'blue': '\033[94m',
+                'green': '\033[92m',
+                'yellow': '\033[93m',
+                'red': '\033[91m',
+                'bold': '\033[1m',
+                'underline': '\033[4m'}
+    if not style or style == 'black':
+        print(msg)
+    else:
+        print("{color1}{msg}{color2}".format(color1=_bcolors[style],msg=msg,color2='\033[0m'))
+
+
+
