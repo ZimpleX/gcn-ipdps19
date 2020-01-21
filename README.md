@@ -2,7 +2,9 @@
 
 Open source code for the GCN training algorithm in the IEEE/IPDPS'19 paper.
 
-Right now, for ease of extending the framework, we have integrated our sampling and feature propagation algorithm into Tensorflow (where the subgraph feature propagation as a self-defined operation).
+Right now, for ease of extending the framework, we have integrated our sampling and feature propagation algorithm into Tensorflow (where the subgraph feature propagation as a self-defined operation). 
+
+#### Important Note: Please go to [this repo](https://github.com/GraphSAINT/GraphSAINT/tree/master/ipdps19_cpp) for the C++ implementation. 
 
 ### Contact
 
